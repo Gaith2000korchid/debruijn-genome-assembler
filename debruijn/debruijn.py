@@ -30,20 +30,24 @@ from networkx import (
     lowest_common_ancestor,
     has_path,
     random_layout,
+    draw_networkx_edges,
+    draw_networkx_nodes,
 )
 
 matplotlib.use("Agg")
 
 random.seed(9001)
 
-__author__ = "KORCHID Gaith"
-__copyright__ = "Universite Paris Diderot"
-__credits__ = ["KORCHID Gaith"]
-__license__ = "GPL"
+__author__ = "Gaith Korchid"
+__copyright__ = "Universite Paris Diderot and contributors"
+__credits__ = [
+    "Amine Ghozlane (course scaffold and tests)",
+    "Gaith Korchid (student implementation)",
+]
+__license__ = "GPL-3.0-or-later"
 __version__ = "1.0.0"
-__maintainer__ = "korchid2000gaith@gmail.com"
-__email__ = "korchid2000gaith@gmail.com"
-__status__ = "Developpement"
+__maintainer__ = "Gaith Korchid"
+__status__ = "Educational"
 
 
 def isfile(path: str) -> Path:  # pragma: no cover

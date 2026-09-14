@@ -1,40 +1,144 @@
-# Assembleur basé sur les graphes de Debruijn
+# De Bruijn Genome Assembler
 
-Vous trouverez la description complète du TP [ici]( 
-https://docs.google.com/document/d/1P4v3bHbSurD7RXA-ldVwmtNKGvWsnBae51RMGye_KLs/edit?usp=sharing).
+An educational Python implementation of a short-read genome assembler based on a weighted De Bruijn graph.
 
-## Introduction
+> **Project status:** university course project maintained as a portfolio example. It is intended for learning and demonstration, not for production-scale genome assembly.
 
-L’objectif de ce TP sera d’assembler le génome de l’entérovirus A71. Ce génome présente l’intérêt d’être très court: 7408 nucléotides, linéaire et non segmenté.
-Le fichier fastq dont vous disposez a été généré à l’aide du programme ART [Huang 2011] via la commande:
-art_illumina -i eva71.fna -ef -l 100 -f 20 -o eva71 -ir 0 -dr 0 -ir2 0 -dr2 0 -na -qL 41 -rs 1539952693 
-Les lectures ont une qualité maximale (41) et ne présentent pas d’insertion. Seuls les lectures correspondant aux brins 5’ -> 3’ vous sont ici fournies. 
+## Overview
 
-Dans le dossier debruijn-tp/data/, vous trouverez:
-eva71.fna : génome du virus d’intérêt
-eva71_plus_perfect.fq: lectures 
+The program reads single-end FASTQ sequences, extracts k-mers, builds a directed weighted graph, removes simple bubbles and tips, and writes the resulting contigs in FASTA format.
 
+The implementation demonstrates:
 
-## Installation des dépendances
+- FASTQ parsing with Python generators;
+- k-mer extraction and occurrence counting;
+- weighted directed graphs with NetworkX;
+- basic bubble and tip removal;
+- contig reconstruction and FASTA export;
+- command-line interfaces and automated tests.
 
-Vous utiliserez les librairies networkx, pytest et pylint de Python:
+## My contribution
 
+This repository is based on the GPL-licensed teaching scaffold created by [Amine Ghozlane](https://github.com/aghozlane) for Université Paris Diderot.
+
+Starting from the provided function signatures, docstrings, tests, and example data, **Gaith Korchid implemented the core assembly workflow**, including:
+
+- FASTQ read iteration;
+- k-mer generation and counting;
+- De Bruijn graph construction;
+- path selection by coverage and length;
+- bubble and entry/out-tip simplification;
+- source and sink detection;
+- contig reconstruction;
+- FASTA output and command-line orchestration.
+
+The detailed provenance is recorded in [ATTRIBUTION.md](ATTRIBUTION.md).
+
+## Workflow
+
+1. Read single-end sequences from a FASTQ file.
+2. Split every read into overlapping k-mers.
+3. Count k-mer occurrences.
+4. Create a directed graph whose nodes are `(k-1)`-mers.
+5. Simplify bubbles and low-support tips.
+6. Enumerate paths between source and sink nodes.
+7. Convert paths into contig sequences.
+8. Save contigs in FASTA format.
+
+## Repository structure
+
+```text
+.
+├── data/                    # Reference sequence and simulated reads
+├── debruijn/
+│   └── debruijn.py          # Assembler and command-line interface
+├── tests/                   # Course tests and small fixtures
+├── ATTRIBUTION.md           # Origin and contribution statement
+├── LICENSE                  # GNU GPL v3 or later
+├── requirements.txt         # Runtime dependencies
+└── requirements-dev.txt     # Test and lint dependencies
 ```
-pip3 install --user networkx pytest pylint pytest-cov
+
+## Data provenance
+
+The example is based on the Enterovirus A71 BrCr reference sequence, GenBank accession [U22521](https://www.ncbi.nlm.nih.gov/nuccore/U22521).
+
+The original course reads were simulated with [ART](https://doi.org/10.1093/bioinformatics/btr708) using the command documented in the upstream course material:
+
+```bash
+art_illumina -i eva71.fna -ef -l 100 -f 20 -o eva71 \
+  -ir 0 -dr 0 -ir2 0 -dr2 0 -na -qL 41 -rs 1539952693
 ```
 
-## Utilisation
+The repository contains viral reference and simulated sequencing data only. It contains no patient-level or confidential health data.
 
-Vous créerez un programme Python3 nommé debruijn.py dans le dossier debruijn/.  Il prendra en argument :
- -i fichier fastq single end
- -k taille des kmer (optionnel - default 21)
- -o fichier output avec les contigs
+## Installation
 
-## Tests
+Python 3.9 or later is recommended.
 
-Vous testerez vos fonctions à l’aide de la commande pytest --cov=debruijn à exécuter dans le dossier debruijn-tp/. En raison de cette contrainte, les noms des fonctions ne seront pas libre. Il sera donc impératif de respecter le nom des fonctions “imposées”, de même que leur caractéristique et paramètres. 
-Vous vérifierez également la qualité syntaxique de votre programme en exécutant la commande: pylint debruijn.py
+```bash
+git clone https://github.com/Gaith2000korchid/debruinj-tp.git
+cd debruinj-tp
 
-## Contact
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements-dev.txt
+```
 
-En cas de questions, vous pouvez me contacter par email: amine.ghozlane[at]pasteur.fr
+## Usage
+
+Run the assembler on the included 100-read example:
+
+```bash
+python -m debruijn.debruijn \
+  -i data/eva71_hundred_reads.fq \
+  -k 22 \
+  -o contigs.fasta
+```
+
+For a small graph visualization:
+
+```bash
+python -m debruijn.debruijn \
+  -i data/eva71_two_reads.fq \
+  -k 22 \
+  -o contigs.fasta \
+  -f graph.png
+```
+
+Display all command-line options:
+
+```bash
+python -m debruijn.debruijn --help
+```
+
+## Tests and code checks
+
+Run the test suite with coverage:
+
+```bash
+pytest --cov=debruijn --cov-report=term-missing
+```
+
+Run the linter:
+
+```bash
+pylint debruijn/debruijn.py
+```
+
+The tests and grading fixture originate from the teaching repository and are retained with explicit attribution.
+
+## Limitations
+
+- This is a teaching implementation, not a replacement for established assemblers.
+- The FASTQ reader assumes valid four-line records.
+- The graph simplification rules are deliberately basic.
+- Exhaustive path enumeration does not scale to large sequencing datasets.
+- Only single-end reads are handled.
+
+## License
+
+The Python implementation is distributed under the [GNU General Public License v3.0 or later](LICENSE), matching the license notice in the original teaching scaffold.
+
+The reference sequence and simulated data retain their respective source terms. See [ATTRIBUTION.md](ATTRIBUTION.md).

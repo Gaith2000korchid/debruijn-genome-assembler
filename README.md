@@ -77,7 +77,7 @@ The repository contains viral reference and simulated sequencing data only. It c
 Python 3.9 or later is recommended.
 
 ```bash
-git clone https://github.com/Gaith2000korchid/debruinj-tp.git
+git clone https://github.com/Gaith2000korchid/debruijn-genome-assembler.git
 cd debruinj-tp
 
 python3 -m venv .venv

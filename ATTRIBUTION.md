@@ -14,7 +14,7 @@ The original Git history has been preserved so that authorship and the evolution
 
 ## Student implementation
 
-Gaith Korchid completed the course scaffold in commit [d6f36b5](https://github.com/Gaith2000korchid/debruinj-tp/commit/d6f36b5e917a7fb369372596b83004fa20102f70).
+Gaith Korchid completed the course scaffold in commit [d6f36b5](https://github.com/Gaith2000korchid/debruijn-genome-assembler/commit/d6f36b5e917a7fb369372596b83004fa20102f70).
 
 The implementation added the core logic for FASTQ parsing, k-mer counting, graph construction and simplification, source/sink discovery, contig generation, FASTA export, and command-line execution. It also added small read subsets and an expected FASTA fixture.
 
